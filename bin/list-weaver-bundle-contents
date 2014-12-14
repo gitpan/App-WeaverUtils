@@ -1,0 +1,134 @@
+#!perl
+
+our $DATE = '2014-12-14'; # DATE
+our $VERSION = '0.01'; # VERSION
+
+use 5.010;
+use strict;
+use warnings;
+
+use App::WeaverUtils;
+use Perinci::CmdLine::Any -prefer_lite=>1;
+
+our %SPEC;
+$SPEC{list_weaver_bundle_contents} = {
+    v => 1.1,
+    summary => 'List contents of a Pod::Weaver plugin bundle',
+    args => {
+        bundle => {
+            schema => 'str*',
+            req    => 1,
+            pos    => 0,
+            completion => $App::WeaverUtils::_complete_bundle,
+        },
+        short => {
+            schema => 'bool*',
+            cmdline_aliases => {s=>{}},
+        },
+    },
+};
+sub list_weaver_bundle_contents {
+    require Module::Load;
+
+    my %args = @_;
+
+    my $bundle = $args{bundle};
+    $bundle =~ s/^Pod::Weaver::PluginBundle:://;
+    $bundle =~ s!/!::!g; # convenience
+
+    my $module = "Pod::Weaver::PluginBundle::$bundle";
+    Module::Load::load($module);
+
+    my @cfg = $module->mvp_bundle_config;
+    my $res;
+    for (@cfg) {
+        if ($args{short}) {
+            $_->[1] =~ s/^Pod::Weaver:://;
+        }
+        push @$res, [$_->[0], $_->[1]];
+    }
+
+    [200, "OK", $res];
+}
+
+Perinci::CmdLine::Any->new(
+    url => '/main/list_weaver_bundle_contents',
+)->run;
+
+# ABSTRACT: List contents of a Pod::Weaver plugin bundle
+# PODNAME: list-weaver-bundle-contents
+
+__END__
+
+=pod
+
+=encoding UTF-8
+
+=head1 NAME
+
+list-weaver-bundle-contents - List contents of a Pod::Weaver plugin bundle
+
+=head1 VERSION
+
+This document describes version 0.01 of list-weaver-bundle-contents (from Perl distribution App-WeaverUtils), released on 2014-12-14.
+
+=head1 SYNOPSIS
+
+ % list-weaver-bundle-contents Author::PERLANCAR
+
+=head1 COMPLETION
+
+This script has shell tab completion capability with support for several shells.
+
+=head2 bash
+
+To activate bash completion for this script, put:
+
+ complete -C list-weaver-bundle-contents list-weaver-bundle-contents
+
+in your bash startup (e.g. C<~/.bashrc>). Your next shell session will then recognize tab completion for the command. Or, you can also directly execute the line above in your shell to activate immediately.
+
+It is recommended, however, that you install L<shcompgen> which allows you to activate completion scripts for several kinds of scripts on multiple shells. Some CPAN distributions (those that are built with L<Dist::Zilla::Plugin::GenShellCompletion>) will even automatically enable shell completion for their included scripts (using C<shcompgen>) at installation time, so you can immadiately have tab completion.
+
+=head2 tcsh
+
+To activate tcsh completion for this script, put:
+
+ complete list-weaver-bundle-contents 'p/*/`list-weaver-bundle-contents`/'
+
+in your tcsh startup (e.g. C<~/.tcshrc>). Your next shell session will then recognize tab completion for the command. Or, you can also directly execute the line above in your shell to activate immediately.
+
+It is also recommended to install C<shcompgen> (see above).
+
+=head2 other shells
+
+For fish and zsh, install C<shcompgen> as described above.
+
+=head1 HOMEPAGE
+
+Please visit the project's homepage at L<https://metacpan.org/release/App-WeaverUtils>.
+
+=head1 SOURCE
+
+Source repository is at L<https://github.com/perlancar/perl-App-WeaverUtils>.
+
+=head1 BUGS
+
+Please report any bugs or feature requests on the bugtracker website L<https://rt.cpan.org/Public/Dist/Display.html?Name=App-WeaverUtils>
+
+When submitting a bug or request, please include a test-file or a
+patch to an existing test-file that illustrates the bug or desired
+feature.
+
+=head1 AUTHOR
+
+perlancar <perlancar@cpan.org>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2014 by perlancar@cpan.org.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut

@@ -1,0 +1,108 @@
+#!perl
+
+our $DATE = '2014-12-14'; # DATE
+our $VERSION = '0.01'; # VERSION
+
+use 5.010;
+use strict;
+use warnings;
+
+use App::WeaverUtils;
+use Perinci::CmdLine::Any -prefer_lite=>1;
+
+our %SPEC;
+$SPEC{list_weaver_roles} = {
+    v => 1.1,
+    summary => 'List installed Pod::Weaver roles',
+    args => {
+    },
+};
+sub list_weaver_roles {
+    require Module::List;
+    my %args = @_;
+    my $res = Module::List::list_modules("Pod::Weaver::Role::",
+                                         {list_modules=>1, recurse=>1});
+    [200, "OK", [map {s/^Pod::Weaver::Role:://;$_} sort keys %$res]];
+}
+
+Perinci::CmdLine::Any->new(
+    url => '/main/list_weaver_roles',
+)->run;
+
+# ABSTRACT: List installed Pod::Weaver roles
+# PODNAME: list-weaver-roles
+
+__END__
+
+=pod
+
+=encoding UTF-8
+
+=head1 NAME
+
+list-weaver-roles - List installed Pod::Weaver roles
+
+=head1 VERSION
+
+This document describes version 0.01 of list-weaver-roles (from Perl distribution App-WeaverUtils), released on 2014-12-14.
+
+=head1 SYNOPSIS
+
+ % list-weaver-roles
+
+=head1 COMPLETION
+
+This script has shell tab completion capability with support for several shells.
+
+=head2 bash
+
+To activate bash completion for this script, put:
+
+ complete -C list-weaver-roles list-weaver-roles
+
+in your bash startup (e.g. C<~/.bashrc>). Your next shell session will then recognize tab completion for the command. Or, you can also directly execute the line above in your shell to activate immediately.
+
+It is recommended, however, that you install L<shcompgen> which allows you to activate completion scripts for several kinds of scripts on multiple shells. Some CPAN distributions (those that are built with L<Dist::Zilla::Plugin::GenShellCompletion>) will even automatically enable shell completion for their included scripts (using C<shcompgen>) at installation time, so you can immadiately have tab completion.
+
+=head2 tcsh
+
+To activate tcsh completion for this script, put:
+
+ complete list-weaver-roles 'p/*/`list-weaver-roles`/'
+
+in your tcsh startup (e.g. C<~/.tcshrc>). Your next shell session will then recognize tab completion for the command. Or, you can also directly execute the line above in your shell to activate immediately.
+
+It is also recommended to install C<shcompgen> (see above).
+
+=head2 other shells
+
+For fish and zsh, install C<shcompgen> as described above.
+
+=head1 HOMEPAGE
+
+Please visit the project's homepage at L<https://metacpan.org/release/App-WeaverUtils>.
+
+=head1 SOURCE
+
+Source repository is at L<https://github.com/perlancar/perl-App-WeaverUtils>.
+
+=head1 BUGS
+
+Please report any bugs or feature requests on the bugtracker website L<https://rt.cpan.org/Public/Dist/Display.html?Name=App-WeaverUtils>
+
+When submitting a bug or request, please include a test-file or a
+patch to an existing test-file that illustrates the bug or desired
+feature.
+
+=head1 AUTHOR
+
+perlancar <perlancar@cpan.org>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2014 by perlancar@cpan.org.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
