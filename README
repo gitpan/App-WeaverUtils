@@ -2,8 +2,8 @@ NAME
     App::WeaverUtils - Collection of CLI utilities for Pod::Weaver
 
 VERSION
-    This document describes version 0.01 of App::WeaverUtils (from Perl
-    distribution App-WeaverUtils), released on 2014-12-14.
+    This document describes version 0.02 of App::WeaverUtils (from Perl
+    distribution App-WeaverUtils), released on 2014-12-28.
 
 DESCRIPTION
     This distribution provides several command-line utilities related to
